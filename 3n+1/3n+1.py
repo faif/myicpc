@@ -23,7 +23,6 @@ def cycle_length(n):
     assert(n > 0)
     c = 0
     while n != 1:
-        # print(n)
         if n % 2 != 0:
             n = 3 * n + 1
         else:
