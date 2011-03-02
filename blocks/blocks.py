@@ -30,9 +30,11 @@ n_blocks = None
 # read the input
 for line in fin:
     try:
-        print(line, end='')
+        # print(line, end='')
         if None is n_blocks:
             n_blocks = int(line)
+            on_table = list(range(n_blocks))
+            print(on_table)
         if 'quit' in line:
             exit(NO_ERR)
     except ValueError as e:
