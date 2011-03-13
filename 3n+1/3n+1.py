@@ -17,7 +17,7 @@
 ERR = -1
 
 # calculates the cycle length of the given number
-# @param the input number
+# @param n the input number
 # @return the cycle length as an integer
 def cycle_length(n):
     assert(n > 0)
