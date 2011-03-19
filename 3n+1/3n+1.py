@@ -29,8 +29,11 @@ def cycle_length(n):
             n = n / 2
         c += 1
     c += 1                      # for the last number
-    # print(n)                  # should always be 1
+    assert(1 == n)              # should always be 1
     return c
+
+
+# beginning of the main program
 
 fin = None 
 
