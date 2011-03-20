@@ -14,6 +14,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from pprint import pprint
+
 ERR = -1
 NO_ERR = 0
 
@@ -40,6 +42,22 @@ def illegal(b1, b2, idx1, idx2, w):
     # otherwise assume this is a legal command
     return res
 
+# removes all the elements of a source container
+# until reaching the (value of the) item passed as 
+# an argument
+# @param src the source container
+# @param i the element which indicates termination
+def remove_until(src, i):
+    for x in src[:]:
+        # terminate if requested
+        if x is i:
+            return
+        try:
+            src.remove(x)
+        except Exception as e:
+            print('error:', e)
+            exit(ERR)
+        
 
 # removes all the elements of a source container
 # and copies them to their initial positions;
@@ -62,6 +80,7 @@ def move(w, src, con=None):
         except Exception as e:
             print('error:', e)
             exit(ERR)
+
 
 # searches for an item in a container
 # @param i the item
@@ -101,6 +120,7 @@ def move_onto(b1, b2, w, idx1, idx2):
     tmp.extend(w[idx2])
     w[idx2] = tmp
 
+
 # puts a block on top of the stack which contains another block,
 # after returning all the blocks that are stacked on top of the 
 # moved block to their initial positions
@@ -124,6 +144,75 @@ def move_over(b1, b2, w, idx1, idx2):
     tmp.extend(w[idx2])
     w[idx2] = tmp
 
+# puts the pile of blocks consisting of a source block and any 
+# blocks on top of it, onto a destination block; all blocks on
+# top of the destination block are moved to their initial 
+# positions
+# @param b1 the base block
+# @param b2 the stacked block
+# @param w the world (current stacks)
+# @param idx1 the index of the first block in the world
+# @param idx2 the index of the second block in the world
+def pile_onto(b1, b2, w, idx1, idx2):
+
+    # return any blocks that are stacked on top of 
+    # b2 to their initial positions
+    move(w, w[idx2], b2)
+
+    # save the pile of b1 and the blocks stacked on it
+    try:
+        idx = w[idx1].index(b1)
+    except Exception as e:
+        print('error', e)
+        exit(ERR)
+
+    pile = w[idx1][:idx+1]
+
+    # cleanup the stack of b1
+    remove_until(w[idx1], b1)
+    # remove b1 manually since remove_until 
+    # does not remove it
+    del w[idx1][0]
+    
+    # put the pile of b1 on the stack of b2
+    pile.extend(w[idx2])
+    w[idx2] = pile
+
+
+# @param b1 the base block
+# @param b2 the stacked block
+# @param w the world (current stacks)
+# @param idx1 the index of the first block in the world
+# @param idx2 the index of the second block in the world
+def pile_over(b1, b2, w, idx1, idx2):
+    # save the pile of b1 and the blocks stacked on it
+    try:
+        idx = w[idx1].index(b1)
+    except Exception as e:
+        print('error', e)
+        exit(ERR)
+
+    pile = w[idx1][:idx+1]
+
+    # cleanup the stack of b1
+    remove_until(w[idx1], b1)
+    # remove b1 manually since remove_until 
+    # does not remove it
+    del w[idx1][0]
+    
+    # put the pile of b1 on the stack of b2
+    pile.extend(w[idx2])
+    w[idx2] = pile
+
+
+# prints the block world in the standard output
+# @param w a list of lists representing the world
+def show_output(w):
+    for i in range(len(w)):
+        w[i].reverse()          # to print it as required
+        print(i, ':', w[i], sep='')
+        
+
 # beginning of the main program
 
 fin = None 
@@ -145,6 +234,7 @@ for line in fin:
     try:
         # exit on quit
         if 'quit' in line:
+            show_output(world)
             exit(NO_ERR)
 
         # initialisation
@@ -153,17 +243,17 @@ for line in fin:
             n_blocks = int(line)
             # initialise the world
             [world.append(list([i])) for i in range(n_blocks)]
-            world[5] = []
-            world[6] = []
-            world[7] = []
-            world[4] = []
-            world[2] = []
-            world[3] = []
-            world[0] = []
-            world[8] = [0, 8] 
-            world[1] = [5, 1, 7]
-            world[9] = [4, 2, 9, 3]
-            print(world)
+            # world[5] = []
+            # world[6] = []
+            # world[7] = []
+            # world[4] = []
+            # world[2] = []
+            # world[3] = []
+            # world[0] = []
+            # world[8] = [] 
+            # world[1] = [5, 1, 7, 8]
+            # world[9] = [4, 2, 9, 3]
+            # print(world)
         # processing
         else:
             # parse a single line
@@ -180,7 +270,6 @@ for line in fin:
 
             # ignore the illegal commands
             if illegal(b1, b2, idx1, idx2, world):
-                print('ill')
                 continue
 
             # handle the move commands
@@ -192,10 +281,10 @@ for line in fin:
             # handle the pile commands
             elif 'pile' in c1:
                 if 'onto' in c2:
-                    pass
+                    pile_onto(b1, b2, world, idx1, idx2)
                 elif 'over' in c2:
-                    pass
-            print(world)
+                    pile_over(b1, b2, world, idx1, idx2)
+            # print(world)
 
     except ValueError as e:
         print('input error:', e)
