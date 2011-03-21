@@ -14,8 +14,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pprint import pprint
-
 ERR = -1
 NO_ERR = 0
 
@@ -210,7 +208,10 @@ def pile_over(b1, b2, w, idx1, idx2):
 def show_output(w):
     for i in range(len(w)):
         w[i].reverse()          # to print it as required
-        print(i, ':', w[i], sep='')
+        # convert the list into the required output 
+        str_w = str(w[i])
+        str_w = str_w.replace(']', '').replace('[', '').replace(',', '')
+        print(i, ': ', str_w, sep='')
         
 
 # beginning of the main program
