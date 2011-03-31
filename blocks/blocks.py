@@ -244,17 +244,6 @@ for line in fin:
             n_blocks = int(line)
             # initialise the world
             [world.append(list([i])) for i in range(n_blocks)]
-            # world[5] = []
-            # world[6] = []
-            # world[7] = []
-            # world[4] = []
-            # world[2] = []
-            # world[3] = []
-            # world[0] = []
-            # world[8] = [] 
-            # world[1] = [5, 1, 7, 8]
-            # world[9] = [4, 2, 9, 3]
-            # print(world)
         # processing
         else:
             # parse a single line
@@ -285,7 +274,6 @@ for line in fin:
                     pile_onto(b1, b2, world, idx1, idx2)
                 elif 'over' in c2:
                     pile_over(b1, b2, world, idx1, idx2)
-            # print(world)
 
     except ValueError as e:
         print('input error:', e)
