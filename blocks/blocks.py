@@ -14,8 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ERR = -1
-NO_ERR = 0
+ERR, NO_ERR = (1, 0)
 
 # tests whether a command is illegal
 # @param b1 the first block
