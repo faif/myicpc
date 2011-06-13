@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ERR = -1
+ERR = 1
 
 # calculates the cycle length of the given number
 # @param n the input number
