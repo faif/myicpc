@@ -41,15 +41,15 @@ if __name__ == '__main__':
                 i = int(i)
                 j = int(j)
             except ValueError as e:
-                print('input error:', e)
+                print(('input error:', e))
                 exit(ERR)
 
             # find the maximum cycle length
-            x = range(i, j)
+            x = list(range(i, j))
             max_cl = 0
             for y in x:
                 cl = cycle_length(y)
                 if cl > max_cl:
                     max_cl = cl
 
-        print('{} {} {}'.format(i, j, max_cl))
+        print(('{} {} {}'.format(i, j, max_cl)))
