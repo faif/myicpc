@@ -20,6 +20,7 @@ class InvalidInputError(ValueError):
     '''raised when non-acceptable input is given'''
 
 def cycle_length(n):
+    '''calculate the cycle length of n'''
     if n <= 0:
         raise InvalidInputError('error: input must be positive')
     c = 0
@@ -41,7 +42,7 @@ if __name__ == '__main__':
                 i = int(i)
                 j = int(j)
             except ValueError as e:
-                print(('input error:', e))
+                print('input error: {}'.format(e))
                 exit(ERR)
 
             # find the maximum cycle length
@@ -52,4 +53,4 @@ if __name__ == '__main__':
                 if cl > max_cl:
                     max_cl = cl
 
-        print(('{} {} {}'.format(i, j, max_cl)))
+        print('{} {} {}'.format(i, j, max_cl))
