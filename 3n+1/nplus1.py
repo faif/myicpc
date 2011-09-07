@@ -50,7 +50,6 @@ if __name__ == '__main__':
             max_cl = 0
             for y in x:
                 cl = cycle_length(y)
-                if cl > max_cl:
-                    max_cl = cl
+                max_cl = max(cl, max_cl)
 
         print('{} {} {}'.format(i, j, max_cl))

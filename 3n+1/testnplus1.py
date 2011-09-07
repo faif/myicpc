@@ -22,5 +22,18 @@ class CycleLenBadInput(unittest.TestCase):
         '''cycle_length should fail with negative/zero input'''
         self.assertRaises(nplus1.InvalidInputError, nplus1.cycle_length, 0)
 
+class KnownCycleLengths(unittest.TestCase):
+    known_lengths = ( (1, 1),
+                      (2, 2),
+                      (4, 3),
+                      (22, 16),
+                      (50, 25))
+
+    def test_known_lengths(self):
+        '''cycle_length should give the expected result with known input'''
+        for num, cyc_len in self.known_lengths:
+            result = nplus1.cycle_length(num)
+            self.assertEqual(result, cyc_len)
+
 if __name__ == '__main__':
     unittest.main()
