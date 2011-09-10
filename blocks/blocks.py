@@ -16,7 +16,7 @@
 
 ERR, NO_ERR = (1, 0)
 
-def illegal(b1, b2, idx1, idx2, w):
+def _illegal(b1, b2, idx1, idx2, w):
     '''Check whether a command is illegal using the blocks b1
     and b2, their indices idx1 and idx2 in w, and the world w'''
     res = False
@@ -42,12 +42,12 @@ def remove_until(src, i):
         try:
             src.remove(x)
         except ValueError as e:
-            print('error: {}'.format(e))
+            print('ERROR: remove_until: {}'.format(e))
             exit(ERR)
 
-def move(w, src, con=None):
-    '''Remove all the elements from src and append them in
-    w; optionally terminate when reaching con'''
+def _move(w, src, con=None):
+    '''Move (append) all the elements from src to w;
+    optionally terminate when reaching con'''
     for x in src[:]:
         # terminate if requested
         if con and x == con:
@@ -58,11 +58,13 @@ def move(w, src, con=None):
             if x not in w[x]:
                 w[x].append(x)
         except ValueError as e:
-            print('error: {}'.format(e))
+            print('ERROR: move: {}'.format(e))
             exit(ERR)
 
 def lookup(i, c):
-    '''Search for i c; if found return its index'''
+    '''Search for i in c; if found return its index;
+    each element of c must be iterable, for example
+    c should be a list of lists'''
     idx = 0
     for x in c:
         if i in x:
@@ -70,39 +72,54 @@ def lookup(i, c):
         idx += 1
     return -1
 
+def _to_stack(t, idx, c):
+    '''Reorder c[idx] to make it look like a stack
+    (t being on top)'''
+    tmp = [t]
+    tmp.extend(c[idx])
+    c[idx] = tmp
+
+def _clean_old_stack(i, s):
+    if i in s:
+        s.remove(i)
+
 def move_onto(b1, b2, w, idx1, idx2):
     '''Put b1 on top of b2, after returning any blocks 
     that are stacked on top of both blocks to their initial
     positions'''
     # return any blocks that are stacked on top of
     # b1 and b2 to their initial positions
-    move(w, w[idx1], b1)
-    move(w, w[idx2], b2)
+    _move(w, w[idx1], b1)
+    _move(w, w[idx2], b2)
 
     # remove b1 from the old stack
-    if b1 in w[idx1]:
-        w[idx1].remove(b1)
+    _clean_old_stack(b1, w[idx1])
 
     # make the new stack look like a stack ([0] being the top)
-    tmp = [b1]
-    tmp.extend(w[idx2])
-    w[idx2] = tmp
+    _to_stack(b1, idx2, w)
 
 def move_over(b1, b2, w, idx1, idx2):
     '''Put b1 on top of b2, after returning all the blocks 
     that are stacked on top of b1 to their initial positions'''
     # return any blocks that are stacked on top of
     # b1 to their initial positions
-    move(w, w[idx1], b1)
+    _move(w, w[idx1], b1)
 
     # remove b1 from the old stack
-    if b1 in w[idx1]:
-        w[idx1].remove(b1)
+    _clean_old_stack(b1, w[idx1])
 
     # make the new stack look like a stack ([0] being the top)
-    tmp = [b1]
-    tmp.extend(w[idx2])
-    w[idx2] = tmp
+    _to_stack(b1, idx2, w)
+
+def _cleanup(w, b):
+    remove_until(w, b)
+    # remove the final element manually since
+    # remove_until does not remove it
+    del w[0]
+
+def _extend_pile(p, c, idx):
+    p.extend(c[idx])
+    c[idx] = p
 
 def pile_onto(b1, b2, w, idx1, idx2):
     '''Put the pile of blocks consisting of b1 and any blocks
@@ -110,26 +127,22 @@ def pile_onto(b1, b2, w, idx1, idx2):
     their initial positions'''
     # return any blocks that are stacked on top of 
     # b2 to their initial positions
-    move(w, w[idx2], b2)
+    _move(w, w[idx2], b2)
 
     # save the pile of b1 and the blocks stacked on it
     try:
         idx = w[idx1].index(b1)
     except ValueError as e:
-        print('error {}'.format(e))
+        print('ERROR: pile_onto: {}'.format(e))
         exit(ERR)
 
     pile = w[idx1][:idx+1]
 
     # cleanup the stack of b1
-    remove_until(w[idx1], b1)
-    # remove b1 manually since remove_until
-    # does not remove it
-    del w[idx1][0]
+    _cleanup(w[idx1], b1)
 
     # put the pile of b1 on the stack of b2
-    pile.extend(w[idx2])
-    w[idx2] = pile
+    _extend_pile(pile, w, idx2)
 
 def pile_over(b1, b2, w, idx1, idx2):
     '''Put the pile of blocks consisting of b1 and any blocks 
@@ -139,20 +152,16 @@ def pile_over(b1, b2, w, idx1, idx2):
     try:
         idx = w[idx1].index(b1)
     except Exception as e:
-        print('error {}'.format(e))
+        print('ERROR: pile_over: {}'.format(e))
         exit(ERR)
 
     pile = w[idx1][:idx+1]
 
     # cleanup the stack of b1
-    remove_until(w[idx1], b1)
-    # remove b1 manually since remove_until 
-    # does not remove it
-    del w[idx1][0]
-    
+    _cleanup(w[idx1], b1)
+
     # put the pile of b1 on the stack of b2
-    pile.extend(w[idx2])
-    w[idx2] = pile
+    _extend_pile(pile, w, idx2)    
 
 def show_output(w):
     for i in range(len(w)):
@@ -190,7 +199,7 @@ if __name__ == '__main__':
                 idx1 = lookup(b1, world)
                 idx2 = lookup(b2, world)
 
-                if illegal(b1, b2, idx1, idx2, world):
+                if _illegal(b1, b2, idx1, idx2, world):
                     continue
 
                 if 'move' in c1:
