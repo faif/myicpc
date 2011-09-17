@@ -185,13 +185,13 @@ if __name__ == '__main__':
             # initialisation
             if not n_blocks:
                 n_blocks = int(line)
-                [world.append(list([i])) for i in range(n_blocks)]
+                tuple(world.append(list([i])) for i in range(n_blocks))
             # processing
             else:
                 c1, b1, c2, b2 = line.split()
                 b1 = int(b1)
                 b2 = int(b2)
-                assert(b1 >= 0 and b2 >= 0)
+                assert(b1 >= 0 and b2 >= 0), 'Blocks must be positive'
 
                 # get the indices of the blocks
                 # not necessary in this case since index = item
