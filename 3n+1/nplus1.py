@@ -31,7 +31,8 @@ def cycle_length(n):
             n = n / 2
         c += 1
     c += 1                      # for the last number
-    assert(1 == n)              # should always be 1
+    # n should always be 1
+    assert(1 == n), 'Did you change the logic of the algorithm?'
     return c
 
 if __name__ == '__main__':
