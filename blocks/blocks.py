@@ -65,11 +65,9 @@ def lookup(i, c):
     '''Search for i in c; if found return its index;
     each element of c must be iterable, for example
     c should be a list of lists'''
-    idx = 0
-    for x in c:
+    for (idx, x) in enumerate(c):
         if i in x:
             return idx
-        idx += 1
     return -1
 
 def _to_stack(t, idx, c):
